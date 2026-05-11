@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eventos y Formularios</title>
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    .contenedor{
+      border: 2px solid black;
+      padding: 20px;
+    }
+
+    form{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .error{
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="contenedor" id="contenedor">
+    <h2>Formulario de prueba</h2>
+
+    <form id="formulario">
+
+      <input type="text" name="nombre" placeholder="Nombre">
+      
+      <input type="text" name="apellido" placeholder="Apellido">
+
+      <div id="campos-dinamicos"></div>
+
+      <button type="button" id="agregarCampo">
+        Agregar campo
+      </button>
+
+      <button type="submit">
+        Enviar formulario
+      </button>
+
+      <p class="error" id="mensajeError"></p>
+
+    </form>
+  </div>
+
+  <script>
+
+    const formulario = document.getElementById("formulario")
+    const mensajeError = document.getElementById("mensajeError")
+    const agregarCampoBtn = document.getElementById("agregarCampo")
+    const camposDinamicos = document.getElementById("campos-dinamicos")
+    const contenedor = document.getElementById("contenedor")
+
+    // Evento en el contenedor padre
+    contenedor.addEventListener("click", () => {
+      console.log("Click en el contenedor padre")
+    })
+
+    // Función manejadora del submit
+    function manejarSubmit(event){
+
+      // Evita recargar la página
+      event.preventDefault()
+
+      const inputs = formulario.querySelectorAll("input")
+
+      let hayError = false
+
+      // Validación simple
+      inputs.forEach(input => {
+
+        if(input.value.trim() === ""){
+          hayError = true
+        }
+
+      })
+
+      if(hayError){
+        mensajeError.textContent = "Todos los campos son obligatorios"
+        return
+      }
+
+      mensajeError.textContent = ""
+
+      console.log("Formulario enviado correctamente")
+
+      // Eliminar el listener después de un envío exitoso
+      formulario.removeEventListener("submit", manejarSubmit)
+
+      console.log("Listener eliminado")
+
+    }
+
+    // Asociamos el submit
+    formulario.addEventListener("submit", manejarSubmit)
+
+    // Agregar inputs dinámicamente
+    agregarCampoBtn.addEventListener("click", (event) => {
+
+      // Evita propagación al contenedor
+      event.stopPropagation()
+
+      const nuevoInput = document.createElement("input")
+
+      nuevoInput.type = "text"
+      nuevoInput.placeholder = "Campo dinámico"
+
+      camposDinamicos.appendChild(nuevoInput)
+
+    })
+
+  </script>
+
+</body>
+</html>
