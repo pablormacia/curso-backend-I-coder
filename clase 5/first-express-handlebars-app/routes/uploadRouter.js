@@ -1,5 +1,7 @@
 const express = require('express');
 const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 
 const router = express.Router();
 
@@ -10,21 +12,52 @@ const router = express.Router();
 
 const storage = multer.diskStorage({
 
-  // Carpeta donde se guardarán los archivos
+  // Carpeta donde guardar archivos
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
 
-  // Nombre único para evitar sobrescribir archivos
+  // Generar nombre único usando UUID
   filename: (req, file, cb) => {
 
-    // Timestamp actual
-    const uniqueName =
-      Date.now() + '-' + file.originalname;
+    // Obtener extensión original
+    const extension = path.extname(file.originalname);
 
-    cb(null, uniqueName);
+    // Generar nombre único
+    const fileName = `${uuidv4()}${extension}`;
+
+    cb(null, fileName);
   }
 });
+
+
+// =====================================
+// Validación de tipo de archivo
+// =====================================
+
+const fileFilter = (req, file, cb) => {
+
+  const allowedTypes = [
+    'image/jpeg',
+    'image/png'
+  ];
+
+  if (allowedTypes.includes(file.mimetype)) {
+
+    // Archivo aceptado
+    cb(null, true);
+
+  } else {
+
+    // Archivo rechazado
+    cb(
+      new Error(
+        'Solo se permiten imágenes JPEG y PNG'
+      ),
+      false
+    );
+  }
+};
 
 
 // =====================================
@@ -35,37 +68,61 @@ const upload = multer({
 
   storage,
 
-  // Límite de 2MB
+  fileFilter,
+
   limits: {
-    fileSize: 2 * 1024 * 1024
+
+    // 1.5 MB
+    fileSize: 1.5 * 1024 * 1024
   }
 });
 
 
 // =====================================
-// POST /single
+// POST /upload
 // =====================================
 
-router.post(
-  '/single',
+router.post('/upload', (req, res) => {
 
-  // Middleware de Multer
-  upload.single('file'),
+  upload.single('file')(req, res, (err) => {
 
-  (req, res) => {
+    // Error generado por Multer
+    if (err instanceof multer.MulterError) {
 
-    // Si no llegó archivo
-    if (!req.file) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+
+        return res.status(413).json({
+          error: 'El archivo supera el límite de 1.5MB'
+        });
+      }
+
       return res.status(400).json({
-        error: 'No se recibió ningún archivo'
+        error: err.message
       });
     }
 
-    res.json({
-      message: 'Archivo recibido correctamente',
+    // Error generado por fileFilter
+    if (err) {
+
+      return res.status(400).json({
+        error: err.message
+      });
+    }
+
+    // No llegó archivo
+    if (!req.file) {
+
+      return res.status(400).json({
+        error: 'Debe enviar un archivo'
+      });
+    }
+
+    // Éxito
+    res.status(200).json({
+      message: 'Archivo subido correctamente',
       filename: req.file.filename
     });
-  }
-);
+  });
+});
 
 module.exports = router;
