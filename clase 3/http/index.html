@@ -46,7 +46,7 @@
         resultado.textContent = "Cargando..."
 
         // Request HTTP al backend Node
-        const response = await fetch("http://localhost:3000")
+        const response = await fetch("http://localhost:3000/") // /
 
         // Convertimos respuesta a texto
         const data = await response.text()
