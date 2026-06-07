@@ -1,0 +1,22 @@
+<h1>Perfil de usuario</h1>
+
+<p>Nombre: {{nombre}}</p>
+
+{{#if autenticado}}
+  <p>Bienvenido al sistema.</p>
+{{/if}}
+
+{{#ifEquals rol "admin"}}
+  <p>Panel de administración habilitado.</p>
+
+{{else}}
+
+  {{#ifEquals rol "editor"}}
+    <p>Puede editar contenido.</p>
+
+  {{else}}
+    <p>Acceso de invitado.</p>
+
+  {{/ifEquals}}
+
+{{/ifEquals}}

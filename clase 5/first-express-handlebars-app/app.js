@@ -2,6 +2,8 @@ const express = require('express');
 const exphbs  = require('express-handlebars');
 const mayusculas = require('./helpers/mayusculas');
 const usuariosRouter = require('./routes/usuarios');
+const ifEquals = require('./helpers/ifEquals');
+const perfilRouter = require('./routes/perfil')
 
 const app = express();
 
@@ -13,7 +15,8 @@ app.engine('handlebars', exphbs.engine({
       /* mayusculas: (texto) => {
         return texto.toUpperCase();
       } */
-      mayusculas
+      mayusculas,
+      ifEquals
 
   }
 }));
@@ -31,6 +34,8 @@ app.get('/', (req, res) => {
 
 // Registrar router de usuarios
 app.use(usuariosRouter);
+app.use(perfilRouter);
+
 
 app.listen(3000, () => {
   console.log('Servidor escuchando en puerto 3000');
