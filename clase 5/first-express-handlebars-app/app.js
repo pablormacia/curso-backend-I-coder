@@ -1,6 +1,7 @@
 const express = require('express');
 const exphbs  = require('express-handlebars');
 const mayusculas = require('./helpers/mayusculas');
+const usuariosRouter = require('./routes/usuarios');
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.get('/', (req, res) => {
   });
 });
 
+// Registrar router de usuarios
+app.use(usuariosRouter);
 
 app.listen(3000, () => {
   console.log('Servidor escuchando en puerto 3000');
