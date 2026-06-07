@@ -1,4 +1,10 @@
-<h2>Listado de productos</h2>
+<h1>Listado de productos</h1>
+
+<p>
+  Página {{currentPage}}
+  de
+  {{totalPages}}
+</p>
 
 {{#each productos}}
 
@@ -6,4 +12,26 @@
 
   {{> productCard}}
 
+{{else}}
+
+  <h3>No hay productos disponibles</h3>
+
 {{/each}}
+
+<hr>
+
+<div>
+
+  {{#if prevUrl}}
+    <a href="{{prevUrl}}">
+      ← Anterior
+    </a>
+  {{/if}}
+
+  {{#if nextUrl}}
+    <a href="{{nextUrl}}">
+      Siguiente →
+    </a>
+  {{/if}}
+
+</div>
