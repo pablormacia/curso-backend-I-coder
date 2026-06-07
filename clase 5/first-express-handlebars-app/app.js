@@ -4,6 +4,8 @@ const mayusculas = require('./helpers/mayusculas');
 const usuariosRouter = require('./routes/usuarios');
 const ifEquals = require('./helpers/ifEquals');
 const perfilRouter = require('./routes/perfil')
+const productosRouter = require('./routes/productos');
+
 
 const app = express();
 
@@ -35,6 +37,7 @@ app.get('/', (req, res) => {
 // Registrar router de usuarios
 app.use(usuariosRouter);
 app.use(perfilRouter);
+app.use(productosRouter);
 
 
 app.listen(3000, () => {
