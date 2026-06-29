@@ -1,11 +1,19 @@
 <h1>Productos</h1>
 
+
+
 <!-- FORM CREAR -->
 <form action="/productos/crear" method="POST">
+<select id="categoria" name="categoria" onchange="renderCampos()">
+  <option value="">Seleccionar</option>
+  <option value="ropa">Ropa</option>
+  <option value="electronica">Electrónica</option>
+  <option value="muebles">Muebles</option>
+</select>
   <input name="nombre" placeholder="Nombre" />
-  <input name="categoria" placeholder="Categoria" />
   <input name="precio" placeholder="Precio" />
   <input name="stock" placeholder="Stock" />
+  <div id="camposExtra"></div>
   <button type="submit">Crear</button>
 </form>
 {{#if error}}
@@ -16,21 +24,80 @@
 
 <!-- FILTRO -->
 <form method="GET" action="/productos">
-  <input name="categoria" placeholder="Filtrar por categoría" value="{{categoriaActual}}" />
+  <select id="categoria" name="categoria" value="{{categoriaActual}}">
+  <option value="">Seleccionar</option>
+  <option value="ropa">Ropa</option>
+  <option value="electronica">Electrónica</option>
+  <option value="muebles">Muebles</option>
+</select>
   <button type="submit">Filtrar</button>
 </form>
 
 <hr>
 
 <!-- LISTA -->
-<ul>
+<ul style="list-style: none; padding: 0;">
   {{#each productos}}
-    <li>
-      <b>{{nombre}}</b> - {{categoria}} - ${{precio}} - Stock: {{stock}}
+    <li style="border: 1px solid #ddd; padding: 12px; margin-bottom: 10px; border-radius: 8px;">
+      
+      <h3 style="margin: 0 0 5px 0;">{{nombre}}</h3>
+      
+      <p style="margin: 0 0 8px 0;">
+        <b>{{categoria}}</b> - ${{precio}}
+      </p>
 
-      <form action="/productos/eliminar/{{_id}}" method="POST" style="display:inline;">
-        <button>Eliminar</button>
+      {{#if talles}}
+        <p style="margin: 0;">👕 Talles: {{talles}}</p>
+      {{/if}}
+
+      {{#if marca}}
+        <p style="margin: 0;">🏷️ Marca: {{marca}}</p>
+      {{/if}}
+
+      {{#if material}}
+        <p style="margin: 0;">🪑 Material: {{material}}</p>
+      {{/if}}
+
+      {{#if garantia}}
+        <p style="margin: 0;">🛡️ Garantía: {{garantia}} meses</p>
+      {{/if}}
+
+      <form action="/productos/eliminar/{{_id}}" method="POST" style="margin-top: 10px;">
+        <button type="submit" style="background: red; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer;">
+          Eliminar
+        </button>
       </form>
+
     </li>
   {{/each}}
 </ul>
+
+<script>
+function renderCampos() {
+  const categoria = document.getElementById("categoria").value;
+  const container = document.getElementById("camposExtra");
+
+  container.innerHTML = "";
+
+  if (categoria === "ropa") {
+    container.innerHTML = `
+      <input name="talles" placeholder="Talles (S,M,L)" />
+    `;
+  }
+
+  if (categoria === "electronica") {
+    container.innerHTML = `
+      <input name="marca" placeholder="Marca" />
+      <input name="garantia" placeholder="Garantía (meses)" />
+    `;
+  }
+
+  if (categoria === "muebles") {
+    container.innerHTML = `
+      <input name="material" placeholder="Material" />
+      <input name="ancho" placeholder="Ancho" />
+      <input name="alto" placeholder="Alto" />
+    `;
+  }
+}
+</script>

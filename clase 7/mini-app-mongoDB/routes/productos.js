@@ -24,12 +24,8 @@ router.get("/", async (req, res) => {
 router.post("/crear", async (req, res) => {
   const { nombre, categoria, precio, stock } = req.body;
   try {
-    await Producto.create({
-      nombre,
-      categoria,
-      precio,
-      stock,
-    });
+    await Producto.create(req.body);
+    return res.redirect("/productos");
   } catch (error) {
     console.error("Error al crear el producto:", error);
     return res.redirect("/productos?error=1");
